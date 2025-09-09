@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "code-sync-frontend",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/sync-code-frontend"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*\\.(js|css|ico|png|jpg|jpeg|gif|svg))",
+      "headers": { "cache-control": "s-maxage=31536000,immutable" },
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "buildCommand": "npm run build:prod",
+  "outputDirectory": "dist/sync-code-frontend",
+  "framework": "angular"
+}
