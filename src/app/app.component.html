@@ -1,0 +1,134 @@
+<div class="app-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>{{ title }}</h1>
+    <div class="header-actions">
+      <div class="status-info">
+        <div class="status-indicator">
+          <span class="status-dot" [class]="getSyncStatusClass()"></span>
+          {{ getSyncStatusText() }}
+        </div>
+        <div class="device-count">{{ syncStatus.activeDevices }} device(s)</div>
+      </div>
+      <button class="btn btn-secondary" (click)="forceSync()">Sync</button>
+      <button class="btn btn-secondary" (click)="exportData()">Export</button>
+      <label class="btn btn-secondary import-label">
+        Import
+        <input type="file" class="file-input" accept=".json" (change)="importData($event)">
+      </label>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Auto-save toggle -->
+      <div class="auto-save-toggle">
+        <input type="checkbox" id="autosave" [(ngModel)]="autoSave">
+        <label for="autosave">Auto-save</label>
+      </div>
+
+      <!-- New Snippet Form -->
+      <div class="section">
+        <h3>Create New Snippet</h3>
+        <div class="new-snippet-form">
+          <input 
+            type="text" 
+            class="input" 
+            placeholder="Snippet title..."
+            [(ngModel)]="newSnippetTitle"
+            (keydown.enter)="createNewSnippet()">
+          <select class="input" [(ngModel)]="selectedLanguage">
+            <option *ngFor="let lang of languages" [value]="lang.value">{{ lang.label }}</option>
+          </select>
+          <button class="btn" (click)="createNewSnippet()">Create</button>
+        </div>
+      </div>
+
+      <!-- Snippets List -->
+      <div class="section">
+        <h3>Snippets ({{ snippets.length }})</h3>
+        <div class="snippet-list">
+          <div 
+            *ngFor="let snippet of snippets" 
+            class="snippet-item"
+            [class.active]="currentSnippet?.id === snippet.id"
+            (click)="selectSnippet(snippet)">
+            <div class="snippet-title">{{ snippet.title }}</div>
+            <div class="snippet-meta">
+              {{ snippet.language }} • {{ formatTimestamp(snippet.timestamp) }}
+            </div>
+            <div class="device-info">{{ snippet.deviceName }}</div>
+            <div class="snippet-actions">
+              <button class="btn btn-small btn-danger" (click)="deleteSnippet(snippet); $event.stopPropagation()">
+                Delete
+              </button>
+            </div>
+          </div>
+          
+          <div *ngIf="snippets.length === 0" class="snippet-item">
+            <div style="text-align: center; color: #666;">No snippets yet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Devices -->
+      <div class="section">
+        <h3>Active Devices</h3>
+        <div class="device-list">
+          <div *ngFor="let device of devices" class="device-item" [class.current]="device.isCurrentDevice">
+            <div>{{ device.name }}</div>
+            <div style="font-size: 10px; color: #999;">
+              {{ device.isCurrentDevice ? 'Current device' : 'Last seen: ' + formatLastSeen(device.lastSeen) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="section">
+        <h3>Actions</h3>
+        <div class="btn-group">
+          <button class="btn btn-secondary" (click)="clearAllData()">Clear All</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editor Area -->
+    <div class="editor-container">
+      <!-- Editor Header -->
+      <div class="editor-header" *ngIf="currentSnippet">
+        <div class="editor-title">{{ currentSnippet.title }}</div>
+        <select class="language-selector" [(ngModel)]="selectedLanguage" (change)="updateSnippetLanguage()">
+          <option *ngFor="let lang of languages" [value]="lang.value">{{ lang.label }}</option>
+        </select>
+      </div>
+
+      <!-- Editor -->
+      <div class="editor-area">
+        <app-monaco-editor 
+          #editor
+          [content]="currentSnippet?.content || ''"
+          [language]="currentSnippet?.language || 'javascript'"
+          (contentChange)="onContentChange($event)">
+        </app-monaco-editor>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-indicator">
+          <span class="status-dot" [class]="getSyncStatusClass()"></span>
+          {{ getSyncStatusText() }}
+        </div>
+        <div style="margin-left: auto;">
+          <span *ngIf="currentSnippet">
+            {{ currentSnippet.language }} | 
+            Last saved: {{ formatTimestamp(currentSnippet.timestamp) }} |
+            {{ currentSnippet.deviceName }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
