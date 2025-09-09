@@ -1,0 +1,35 @@
+{
+  "name": "code-sync-tool",
+  "version": "1.0.0",
+  "description": "Real-time code synchronization tool for sharing code between multiple computers",
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "code-sync",
+    "real-time",
+    "collaboration",
+    "angular",
+    "express",
+    "vercel",
+    "serverless"
+  ],
+  "author": "Code Sync Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darrassipro/Sync_code_FrontEnd.git"
+  },
+  "homepage": "https://github.com/darrassipro/Sync_code_FrontEnd#readme"
+}
